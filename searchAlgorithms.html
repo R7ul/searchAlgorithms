@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Algoritmos de Busca</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<style type="text/css">
+	@font-face {
+	  font-family: 'Lemon';
+	  font-style: normal;
+	  font-weight: 400;
+	  src: local('Lemon Regular'), local('Lemon-Regular'), url(http://fonts.gstatic.com/s/lemon/v5/XcaCAkElV2QjTU53kZeOYQ.woff2) format('woff2');
+	  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+	}
+
+	@media screen and (-webkit-min-device-pixel-ratio:0) {
+	    select {padding-right:18px}
+	}
+
+	body { 
+	  font-family: 'Lemon';
+	  font-size: 14px;
+	}
+
+	h2 {
+		font-size: 4.0vw;
+	}
+
+	#gridSize{
+		position: relative; 
+		height: 50px;
+	    width: 210px;
+	}
+
+	#searchType{
+		position: relative; 
+		height: 50px;
+	    width: 210px;
+	}
+
+	label{
+		width: 210px; 
+		height: 50px; 
+		position: absolute; left: 0px;
+	}
+
+	#main{
+		margin-top: 25px;
+		float:left;
+	}
+
+	#search_grid  {
+		position: relative;
+		height: auto;
+	}
+
+	#weightsKey {
+	  display: none;
+	}
+
+	.button {
+	    background-color: #4CAF50;
+	    border: none;
+	    color: white;
+	    padding: 15px 32px;
+	    text-decoration: none;
+	    display: inline-block;
+	    font-size: 16px;
+	    margin: 4px 2px;
+	    cursor: pointer;
+	    background-color: #555555;
+	    border-radius: 10px;
+	}
+
+	.grid_item {
+		display: block;
+		border: 1px solid #bbb;
+		float: left;
+		line-height:12px;
+		font-size:10px;
+	}
+
+	.grid_item.wall {
+	  background-color: #000000;
+	}
+
+	.grid_item.weight1 {
+	  background-color: #ffffff;
+	}
+
+	.grid_item.weight3 {
+	  background-color: #D6EAFF;
+	}
+
+	.grid_item.weight5 {
+	  background-color: #ABD1FF;
+	}
+
+	.grid_item.start {
+		background-color: #FF703F;
+	}
+
+	.grid_item.active {
+		background-color: #FF703F;
+	}
+
+	.grid_item:hover{
+		background-color :rgb(228,122,0);		
+	}
+
+	select {
+	    padding:3px;
+	    margin: 0;
+	    -webkit-border-radius:4px;
+	    -moz-border-radius:4px;
+	    border-radius:4px;
+	    -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+	    -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+	    box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+	    background: #f8f8f8;
+	    color:#888;
+	    border:none;
+	    outline:none;
+	    width: 140px; 
+	    position: absolute; 
+	    left: 55px; 
+	    top: 0px;
+	    display: inline-block;
+	    -webkit-appearance:none;
+	    -moz-appearance:none;
+	    appearance:none;
+	    cursor:pointer;
+	}
+
+	label {
+	    width: 210px; 
+	    height: 50px;
+	    position: absolute; 
+	    left: 0px; 
+	}
+
+	label:after {
+	    content:'<>';
+	    font:11px "Consolas", monospace;
+	    color:#aaa;
+	    -webkit-transform:rotate(90deg);
+	    -moz-transform:rotate(90deg);
+	    -ms-transform:rotate(90deg);
+	    transform:rotate(90deg);
+	    right:8px; top:2px;
+	    padding:0 0 2px;
+	    border-bottom:1px solid #ddd;
+	    position:absolute;
+	    pointer-events:none;
+	}
+
+	label:before {
+	    content:'';
+	    right:6px; top:0px;
+	    width:20px; height:20px;
+	    background:#f8f8f8;
+	    position:absolute;
+	    pointer-events:none;
+	    display:block;
+	}
+
+	label span{
+		padding-left: 10px;
+		font:11px "Consolas", monospace;
+		font-weight: 900;
+		font-size: 15px;
+		position: absolute; 
+		top:2px;
+	}
+
+	.clear:after {
+		content: ".";
+		display: block;
+		height: 0;
+		clear: both;
+		visibility: hidden;
+	}
+
+	.sizeBlock40x{
+		width: 14.25px; 
+		height: 14.25px;
+	}
+
+	.sizeBlock10x{
+		width: 63px; 
+		height: 63px;
+	}
+
+	.grid_item.weight1.treePath{
+		background-color: #355C7D;   
+		box-shadow: #355C7D;
+		box-shadow: 0 0 20px #355C7D;
+		outline: none;
+	}
+
+	.sizeBlock32x{
+		width: 32px; 
+		height: 32px;
+	}
+
+	.customWall{
+		background-image: url("http://i.imgur.com/AVG6ySl.png");
+    	background-size: 32px 32px;
+	}
+
+	.blockBlue{
+		background-color: #00BFFF !important;
+		box-shadow: #1E90FF !important;
+		outline: none !important;
+	}
+
+	.blockGray{
+		background-color: #A9A9A9 !important;
+		box-shadow: #A9A9A9 !important;
+		outline: none !important;
+	}
+
+	.lk-hidden{
+		display: none;
+	}
+
+	.modal-content{
+		border-radius: 0px;
+	}
+
+	.modal-header{
+		border:none; 
+		padding: 0px;
+	}
+
+	.modal-body{
+		border:none; 
+		padding-top: 20px;
+	}
+
+	.lk-content-row.lk-img{
+		float:none; 
+		padding: 0px; 
+		margin: 0px;
+		display: block; 
+		margin-left: auto; 
+		margin-right: auto;
+		text-align: center;
+	}
+
+	.lk-content-row.lk-msg{
+		float:none; 
+		font-size: 14px; 
+		font-family: arial; 
+		text-align: center; 
+		padding-top: 10px; 
+		padding-bottom: 0px;
+	}
+
+	.lk-h1{
+		margin-left: 15px;
+	}
+
+	.lk-p{
+		margin-left: 30px;
+	}
+
+	.lk-span-option{
+		left:0px;
+		top: 5px;
+	}
+
+	.lk-span-alg{
+		left:-7px;
+		top: 5px;
+	}
+
+	.scoreLabel{
+		display: none;
+		float: left;
+	}
+
+	#scoreTable{
+		text-align: center;
+	}
+
+	.fontTable{
+	  font-family: 'Lemon';
+	  font-style: normal;
+	  font-weight: 400;
+	  text-align: center;
+	}
+
+	.panel-body{
+		width: 550px;
+	}
+
+	h3{
+		width: 500px;
+	}
+
+	th{
+		text-align: center;
+	}
+
+	.options{
+		width: 250px;
+		float:left;
+	}
+</style>
+<script>
+/* ############################# VARIÁVEIS/CONSTANTES GLOBAIS ############################ */
+const VALUE_WALL =-1;
+const NAME_CLASS_WALL ="wall";
+const GOAL = -9999;
+const NAME_CLASS_WALL_CUSTOM ="customWall";
+const A_STAR ="A*";
+const GREEDY ="greedy";
+const UNIFORME_COST  ="uniformCost";
+const TREE_PATH = "treePath";
+const BLOCK_BLUE = "blockBlue";
+var map;
+var max;
+var current = [0,0];
+var old = [0,0];
+/* ############################# VARIÁVEIS/CONSTANTES GLOBAIS ############################ */
+
+/* ############################# UTIL ############################ */
+// Formula da distância no plano cartesiano - Distância Euclidiana
+function h(Δx,xb,Δy,yb) { // h(n) -> Simula Heuristica - Poderia ser um sensor passando dados (via Socket ou não) para o algoritmo utilizar etc ...
+	return Math.sqrt(((xb-(Δx))*(xb-(Δx)))+(yb-(Δy))*(yb-(Δy)));
+}
+
+clearOldStart = function(current) {
+	var x = current[0];
+	var y = current[1];
+	$("#cell_"+x+"_"+y+".grid_item").removeClass("start");
+}
+
+setStart = function(current) {
+	var x = current[0];
+	var y = current[1];
+	$("#cell_"+x+"_"+y+".grid_item").removeClass("blockBlue").removeClass("treePath").addClass("start");
+}
+/* ############################# UTIL ############################ */
+
+/* ######################### Estruturas ######################### */
+var leaf = function (){
+	this.constructor = function() {
+    	this.children = {};
+    	this.children.leaf = [];
+    }
+
+    this.setLeaf = function(node,goTo) {
+    	var ID = node.x+","+node.y;
+    	this.children.leaf.ID = ID;
+    }
+
+    this.getNode = function() {
+    	return this.children.leaf;
+    }
+
+    this.addChildren = function(node,goTo) {
+    	var ID = node[0]+","+node[1];
+    	this.children.leaf[goTo] = {};
+    	this.children.leaf[goTo].ID = ID;
+    }
+    this.constructor();
+}
+
+var tree = function (){
+	this.setNode = function(leaf,newLeaf) {
+		for (var member in leaf)
+			delete leaf[member];
+		for (var member in newLeaf)
+			Object.defineProperty(leaf, member, {value: newLeaf[member]});
+	}
+	
+	this.bestFound = function(leaf,ID,bestPath) {
+		var result;
+		if ((typeof leaf === "undefined")) {
+			return false;
+		}else{	
+			if ((typeof leaf.rightDown === "undefined") && (!leaf) ) 
+					return ;
+			result = this.bestFound(leaf.rightDown,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.left === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.left,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.rightUp === "undefined") && (!leaf)) 
+				return false;
+			result = this.bestFound(leaf.rightUp,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.leftUp === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.leftUp,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.right === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.right,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.up === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.up,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.down === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.down,ID,bestPath);
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if ((typeof leaf.leftDown === "undefined") && (!leaf)) 
+					return false;
+			result = this.bestFound(leaf.leftDown,ID,bestPath);
+			if (leaf && (leaf.ID == ID)) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+			if (result) {
+				bestPath.path.push(leaf.ID);
+				return true;
+			}
+		}
+	}
+
+	this.findLeaf = function(leaf,newLeaf) {
+		var result;
+		if ((typeof leaf === "undefined")) {
+			return false;
+		}else{	
+			if ((typeof leaf.rightDown === "undefined") && (!leaf) ) 
+					return ;
+			result = this.findLeaf(leaf.rightDown,newLeaf);
+			if (result) 
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.left === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.left,newLeaf);
+			if (result) 
+				return true;
+			if (leaf && (leaf.ID == newLeaf)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.rightUp === "undefined") && (!leaf)) 
+				return false;
+			result = this.findLeaf(leaf.rightUp,newLeaf);
+			if (result)
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.leftUp === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.leftUp,newLeaf);
+			if (result) 
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.right === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.right,newLeaf);
+			if (result) 
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.up === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.up,newLeaf);
+			if (result)
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.down === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.down,newLeaf);
+			if (result) 
+				return true;
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if ((typeof leaf.leftDown === "undefined") && (!leaf)) 
+					return false;
+			result = this.findLeaf(leaf.leftDown,newLeaf);
+			if (leaf && (leaf.ID == newLeaf.ID)) {
+				this.setNode(leaf,newLeaf);
+				return true;
+			}
+			if (result)
+				return true;
+		}
+	}
+
+	this.getPath = function(leaf,ID) {
+		var bestPath = {}
+    	bestPath.path = [];
+		this.bestFound(leaf,ID,bestPath);
+		return bestPath;
+	}
+
+	this.addLeaf = function(leaf) {
+		if (this.root) {
+			this.findLeaf(this.root,leaf);
+		}else{
+			this.algorithm;
+			this.lastID;
+			this.totalCost;
+			this.nodeVisited;
+			this.expandedNode;
+			this.root = leaf;
+		}
+	}
+}
+
+class node {
+	constructor(_x,_y,_f,_h,_g) {
+		this.x = _x;
+	    this.y = _y;
+	    this.f = _f;
+	    this.h = _h;
+	    this.g = _g;
+	}
+}
+
+class openL {
+	constructor(){
+		this.list = [];
+	}
+
+	addNode(_x,_y,_f,_h,_g) {
+		this.list.push(new node(_x,_y,_f,_h,_g));
+	}
+
+	getSize(){
+		return this.list.length;
+	}
+
+	getList(){
+		return this.list;
+	}
+
+	findNode(node) {
+		var size = this.getSize();
+		var x = node.x;
+		var y = node.y;
+		var idx;
+		for (var i = 0; i < size; i++) {
+			if ((this.list[i].x == x) && (this.list[i].y == y)) {
+				idx = i;
+				break;
+			}
+		}
+		return idx;
+	}
+
+	removeNode(node){
+		var idx = this.findNode(node);
+		this.list.splice(idx,1);
+	}
+}
+
+class closeL {
+	constructor(){
+		this.list = [];
+	}
+
+	addNode(_x,_y,_f,_h,_g) {
+		this.list.push(new node(_x,_y,_f,_h,_g));
+	}
+
+	getSize(){
+		return this.list.length;
+	}
+
+	getList(){
+		return this.list;
+	}
+
+	findNode(node) {
+		var size = this.getSize();
+		var x = node.x;
+		var y = node.y;
+		var idx;
+		for (var i = 0; i < size; i++) {
+			if ((this.list[i].x == x) && (this.list[i].y == y)) {
+				idx = i;
+				break;
+			}
+		}
+		return idx;
+	}
+
+	removeNode(node){
+		var idx = this.findNode(node);
+		this.list.splice(idx,1);
+	}
+}
+/* ######################### Estruturas ######################### */
+
+/* ######################### Controller ######################### */
+var controller = {};
+controller.getLessNode = function(openList) {
+	var size = openList.getSize();
+	var n = openList.getList()[0].f;
+	var list = openList.getList();
+	var idx = 0;
+	for (var i = 0; i < size; i++) {
+		if (list[i].f < n) {
+			n = list[i].f;
+			idx = i;
+		}
+	}
+	return list[idx];
+}
+
+controller.getNeighbors = function(map,node) {
+	var x = node.x;
+	var y = node.y;
+	var neighbors = [];
+
+	if ((x >= 0 && (y-1 >= 0)) && (map[x][y-1]))
+		neighbors["left"] = [x,y-1];
+
+	if ((((x+1) < max) && (y-1 >= 0)) && (map[x+1][y-1]))
+			neighbors["leftDown"] = [x+1,y-1];
+
+	if (((x-1 >= 0) && (y-1 >= 0)) && (map[x-1][y-1]))
+		neighbors["leftUp"] = [x-1,y-1];
+
+	if (((y+1) < max) && (map[x][y+1])) 
+		neighbors["right"] = [x,y+1];
+
+	if ((((y+1) < max) && (x-1 >= 0)) && (map[x-1][y+1])) 
+		neighbors["rightUp"] = [x-1,y+1];
+		
+	if ((((x+1) < max) && (y+1) < max) && (map[x+1][y+1]))
+		neighbors["rightDown"] = [x+1,y+1];
+
+	if ((x-1) >= 0)
+		neighbors["up"] = [x-1,y];
+
+	if (((x+1) < max) && (map[x+1][y]))
+		neighbors["down"] = [x+1,y];	
+
+	return neighbors;
+}
+
+controller.checkNodeWeight = function(neighbor,list) {
+	var result = false;
+	var f = neighbor.f;
+	var x = neighbor[0];
+	var y = neighbor[1];
+	var size = list.getSize();
+	list = list.list;
+	for (var i = 0; i < size; i++) {
+		if ((list[i].x == x) && list[i].y == y) {
+			if (list[i].f <= f) {
+				result = true;
+			}
+		}
+	}
+	return result;
+}
+
+controller.ShowBestPath = function(bestPath) {
+	bestPath = bestPath.path;
+	if (bestPath.length > 0) {
+		bestPath.reverse();
+		var sizeList = bestPath.length-1;
+		var coordinate;
+		var x;
+		var y;
+		var end = setInterval(function(){simulation()}, 50);
+		function simulation() {
+			coordinate = bestPath[sizeList--];
+			x = coordinate.split(",")[0];
+			y = coordinate.split(",")[1];
+			$("#cell_"+x+"_"+y+"").addClass("blockBlue");
+			if (sizeList <= -1) {
+				 stopSimulation();
+			}
+		}
+		function stopSimulation() {
+			clearInterval(end);
+			$("#newMap").css("pointerEvents", "auto");
+			$("#gridSize").css("pointerEvents", "auto");
+			$("#searchType").css("pointerEvents", "auto");
+			$("#main").css("pointerEvents", "auto");
+		}
+	}
+}
+
+controller.showPath = function(pathTree,bestPath) {
+	if (pathTree.length > 0) {
+		pathTree.reverse();
+		var sizeList = pathTree.length-1;
+		var coordinate;
+		var x;
+		var y;
+		$("#newMap").css("pointerEvents", "none");
+		$("#gridSize").css("pointerEvents", "none");
+		$("#searchType").css("pointerEvents", "none");
+		$("#main").css("pointerEvents", "none");
+		var end = setInterval(function(){simulation()}, 50);
+		function simulation() {
+			coordinate = pathTree[sizeList--];
+			x = coordinate.split(",")[0];
+			y = coordinate.split(",")[1];
+			$("#cell_"+x+"_"+y+"").addClass("treePath");
+			if (sizeList <= -1) {
+				 stopSimulation();
+			}
+		}
+		function stopSimulation() {
+			clearInterval(end);
+			controller.ShowBestPath(bestPath);
+		}
+	}
+}
+/* ######################### Controller ######################### */
+
+/* ######################### Tipos de Mapas ######################### */
+function createMap(max){
+	var map = new Array(max);
+	var chance;
+	var line;
+
+	$("#search_grid").empty();
+	for (var i = 0; i < max; i++) 
+		map[i] = new Array(max);
+	for (var i = 0; i < max; i++){
+		$("#search_grid").append("<div class='clear'></div>");
+		line = $(".clear:last-child");
+		for(var j = 0; j < max; j++) {
+			chance = Math.random() * 100;
+			if (chance > 80) {
+				map[i][j] = -1;
+				line.append("<span class='grid_item wall ' id='cell_"+i+"_"+j+"' x='"+i+"' y='"+j+"'></span>");
+			}else{
+				map[i][j] = 1;
+				line.append("<span class='grid_item weight1 ' id='cell_"+i+"_"+j+"' x='"+i+"' y='"+j+"'></span>");
+			}
+		}
+	}
+	map[0][0] = 1;
+	$(".clear:first-child .grid_item:first-child").removeClass(NAME_CLASS_WALL);
+	$(".grid_item").removeClass("sizeBlock40x").removeClass("sizeBlock10x");
+	if (max == 10) {
+		$(".grid_item").addClass("sizeBlock10x");
+	}else if (max == 40) {
+		$(".grid_item").addClass("sizeBlock40x");
+	}
+	return map;
+}
+
+function maze(max){
+	var mazeSize = max;
+	var map = new Array(mazeSize);
+	var chance;
+	var line;
+
+	$("#search_grid").empty();
+	for (var i = 0; i < mazeSize; i++) 
+		map[i] = new Array(mazeSize);
+	for (var i = 0; i < mazeSize; i++){
+		$("#search_grid").append("<div class='clear'></div>");
+		line = $(".clear:last-child");
+		for(var j = 0; j < mazeSize; j++) {
+			map[i][j] = 1;
+			line.append("<span class='grid_item weight1 ' id='cell_"+i+"_"+j+"' x='"+i+"' y='"+j+"'></span>");
+		}
+	}
+
+	//Labirinto - INICIO
+	map[3][2] = -1;
+	$("#cell_"+3+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[3][3] = -1;
+	$("#cell_"+3+"_"+3+"").removeClass("weight1").addClass("customWall");
+
+	map[3][4] = -1;
+	$("#cell_"+3+"_"+4+"").removeClass("weight1").addClass("customWall");
+
+	map[3][5] = -1;
+	$("#cell_"+3+"_"+5+"").removeClass("weight1").addClass("customWall");
+
+	map[3][6] = -1;
+	$("#cell_"+3+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[4][2] = -1;
+	$("#cell_"+4+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[5][2] = -1;
+	$("#cell_"+5+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[6][2] = -1;
+	$("#cell_"+6+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[7][2] = -1;
+	$("#cell_"+7+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[3][7] = -1;
+	$("#cell_"+3+"_"+7+"").removeClass("weight1").addClass("customWall");
+
+	map[3][8] = -1;
+	$("#cell_"+3+"_"+8+"").removeClass("weight1").addClass("customWall");
+
+	map[3][9] = -1;
+	$("#cell_"+3+"_"+9+"").removeClass("weight1").addClass("customWall");
+
+	map[3][10] = -1;
+	$("#cell_"+3+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[8][2] = -1;
+	$("#cell_"+8+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[8][10] = -1;
+	$("#cell_"+8+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[8][11] = -1;
+	$("#cell_"+8+"_"+11+"").removeClass("weight1").addClass("customWall");
+
+	map[8][12] = -1;
+	$("#cell_"+8+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[8][13] = -1;
+	$("#cell_"+8+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[8][14] = -1;
+	$("#cell_"+8+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[8][15] = -1;
+	$("#cell_"+8+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[8][16] = -1;
+	$("#cell_"+8+"_"+16+"").removeClass("weight1").addClass("customWall");
+
+	map[8][17] = -1;
+	$("#cell_"+8+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[8][18] = -1;
+	$("#cell_"+8+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[8][19] = -1;
+	$("#cell_"+8+"_"+19+"").removeClass("weight1").addClass("customWall");
+
+	map[8][20] = -1;
+	$("#cell_"+8+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[8][21] = -1;
+	$("#cell_"+8+"_"+21+"").removeClass("weight1").addClass("customWall");
+
+	map[8][22] = -1;
+	$("#cell_"+8+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[8][23] = -1;
+	$("#cell_"+8+"_"+23+"").removeClass("weight1").addClass("customWall");
+
+	map[8][24] = -1;
+	$("#cell_"+8+"_"+24+"").removeClass("weight1").addClass("customWall");
+
+	map[8][25] = -1;
+	$("#cell_"+8+"_"+25+"").removeClass("weight1").addClass("customWall");
+
+	map[8][26] = -1;
+	$("#cell_"+8+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[3][26] = -1;
+	$("#cell_"+3+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[4][26] = -1;
+	$("#cell_"+4+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[5][26] = -1;
+	$("#cell_"+5+"_"+26+"").removeClass("weight1").addClass("customWall");
+	
+	map[6][26] = -1;
+	$("#cell_"+6+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[7][26] = -1;
+	$("#cell_"+7+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[0][18] = -1;
+	$("#cell_"+0+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[1][18] = -1;
+	$("#cell_"+1+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[2][18] = -1;
+	$("#cell_"+2+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[3][18] = -1;
+	$("#cell_"+3+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[4][18] = -1;
+	$("#cell_"+4+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[5][18] = -1;
+	$("#cell_"+5+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[9][26] = -1;
+	$("#cell_"+9+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[10][26] = -1;
+	$("#cell_"+10+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[11][26] = -1;
+	$("#cell_"+11+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[12][26] = -1;
+	$("#cell_"+12+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[13][26] = -1;
+	$("#cell_"+13+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[14][26] = -1;
+	$("#cell_"+14+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[15][26] = -1;
+	$("#cell_"+15+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[16][26] = -1;
+	$("#cell_"+16+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[17][26] = -1;
+	$("#cell_"+17+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[18][26] = -1;
+	$("#cell_"+18+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[19][26] = -1;
+	$("#cell_"+19+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[20][26] = -1;
+	$("#cell_"+20+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[21][26] = -1;
+	$("#cell_"+21+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[22][26] = -1;
+	$("#cell_"+22+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[23][26] = -1;
+	$("#cell_"+23+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[23][26] = -1;
+	$("#cell_"+23+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[14][25] = -1;
+	$("#cell_"+14+"_"+25+"").removeClass("weight1").addClass("customWall");
+
+	map[14][24] = -1;
+	$("#cell_"+14+"_"+24+"").removeClass("weight1").addClass("customWall");
+
+	map[14][23] = -1;
+	$("#cell_"+14+"_"+23+"").removeClass("weight1").addClass("customWall");
+
+	map[14][22] = -1;
+	$("#cell_"+14+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[14][21] = -1;
+	$("#cell_"+14+"_"+21+"").removeClass("weight1").addClass("customWall");
+
+	map[14][20] = -1;
+	$("#cell_"+14+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[15][20] = -1;
+	$("#cell_"+15+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[16][20] = -1;
+	$("#cell_"+16+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[17][20] = -1;
+	$("#cell_"+17+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[18][20] = -1;
+	$("#cell_"+18+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[19][20] = -1;
+	$("#cell_"+19+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[20][20] = -1;
+	$("#cell_"+20+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[20][22] = -1;
+	$("#cell_"+20+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[20][23] = -1;
+	$("#cell_"+20+"_"+23+"").removeClass("weight1").addClass("customWall");
+
+	map[20][24] = -1;
+	$("#cell_"+20+"_"+24+"").removeClass("weight1").addClass("customWall");
+
+	map[20][26] = -1;
+	$("#cell_"+20+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[21][20] = -1;
+	$("#cell_"+21+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[22][20] = -1;
+	$("#cell_"+22+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[23][20] = -1;
+	$("#cell_"+23+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[24][20] = -1;
+	$("#cell_"+24+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[25][20] = -1;
+	$("#cell_"+25+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[25][21] = -1;
+	$("#cell_"+25+"_"+21+"").removeClass("weight1").addClass("customWall");
+
+	map[25][22] = -1;
+	$("#cell_"+25+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[25][23] = -1;
+	$("#cell_"+25+"_"+23+"").removeClass("weight1").addClass("customWall");
+
+	map[25][24] = -1;
+	$("#cell_"+25+"_"+24+"").removeClass("weight1").addClass("customWall");
+
+	map[25][25] = -1;
+	$("#cell_"+25+"_"+25+"").removeClass("weight1").addClass("customWall");
+
+	map[25][26] = -1;
+	$("#cell_"+25+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[26][26] = -1;
+	$("#cell_"+26+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[27][26] = -1;
+	$("#cell_"+27+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[28][26] = -1;
+	$("#cell_"+28+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[29][26] = -1;
+	$("#cell_"+29+"_"+26+"").removeClass("weight1").addClass("customWall");
+
+	map[12][10] = -1;
+	$("#cell_"+12+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[13][10] = -1;
+	$("#cell_"+13+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[14][10] = -1;
+	$("#cell_"+14+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[15][10] = -1;
+	$("#cell_"+15+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[16][10] = -1;
+	$("#cell_"+16+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[17][10] = -1;
+	$("#cell_"+17+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[18][10] = -1;
+	$("#cell_"+18+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[19][10] = -1;
+	$("#cell_"+19+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[20][10] = -1;
+	$("#cell_"+20+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[11][2] = -1;
+	$("#cell_"+11+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[21][10] = -1;
+	$("#cell_"+21+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[22][10] = -1;
+	$("#cell_"+22+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[23][10] = -1;
+	$("#cell_"+23+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[24][10] = -1;
+	$("#cell_"+24+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[25][10] = -1;
+	$("#cell_"+25+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[25][11] = -1;
+	$("#cell_"+25+"_"+11+"").removeClass("weight1").addClass("customWall");
+
+	map[25][12] = -1;
+	$("#cell_"+25+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[25][13] = -1;
+	$("#cell_"+25+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[25][14] = -1;
+	$("#cell_"+25+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[25][15] = -1;
+	$("#cell_"+25+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[25][16] = -1;
+	$("#cell_"+25+"_"+16+"").removeClass("weight1").addClass("customWall");
+
+	map[25][17] = -1;
+	$("#cell_"+25+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[24][17] = -1;
+	$("#cell_"+24+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[23][17] = -1;
+	$("#cell_"+23+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[22][17] = -1;
+	$("#cell_"+22+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[21][17] = -1;
+	$("#cell_"+21+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[20][17] = -1;
+	$("#cell_"+20+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[19][17] = -1;
+	$("#cell_"+19+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[18][17] = -1;
+	$("#cell_"+18+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[17][17] = -1;
+	$("#cell_"+17+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[16][17] = -1;
+	$("#cell_"+16+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[15][17] = -1;
+	$("#cell_"+15+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[14][17] = -1;
+	$("#cell_"+14+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[13][17] = -1;
+	$("#cell_"+13+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[12][17] = -1;
+	$("#cell_"+12+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[12][16] = -1;
+	$("#cell_"+12+"_"+16+"").removeClass("weight1").addClass("customWall");
+
+	map[12][15] = -1;
+	$("#cell_"+12+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[12][14] = -1;
+	$("#cell_"+12+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[12][13] = -1;
+	$("#cell_"+12+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[12][12] = -1;
+	$("#cell_"+12+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[13][12] = -1;
+	$("#cell_"+13+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[14][12] = -1;
+	$("#cell_"+14+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[15][12] = -1;
+	$("#cell_"+15+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[16][12] = -1;
+	$("#cell_"+16+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[17][12] = -1;
+	$("#cell_"+17+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[18][12] = -1;
+	$("#cell_"+18+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[19][12] = -1;
+	$("#cell_"+19+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[20][12] = -1;
+	$("#cell_"+20+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[21][12] = -1;
+	$("#cell_"+21+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[22][12] = -1;
+	$("#cell_"+22+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[23][12] = -1;
+	$("#cell_"+23+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[23][13] = -1;
+	$("#cell_"+23+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[23][14] = -1;
+	$("#cell_"+23+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[22][15] = -1;
+	$("#cell_"+22+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[22][15] = -1;
+	$("#cell_"+22+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[23][15] = -1;
+	$("#cell_"+23+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[21][15] = -1;
+	$("#cell_"+21+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[22][15] = -1;
+	$("#cell_"+22+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[20][15] = -1;
+	$("#cell_"+20+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[19][15] = -1;
+	$("#cell_"+19+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[18][15] = -1;
+	$("#cell_"+18+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[17][15] = -1;
+	$("#cell_"+17+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[16][15] = -1;
+	$("#cell_"+16+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[15][15] = -1;
+	$("#cell_"+15+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[10][2] = -1;
+	$("#cell_"+10+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[10][2] = -1;
+	$("#cell_"+10+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[10][3] = -1;
+	$("#cell_"+10+"_"+3+"").removeClass("weight1").addClass("customWall");
+
+	map[10][4] = -1;
+	$("#cell_"+10+"_"+4+"").removeClass("weight1").addClass("customWall");
+
+	map[10][5] = -1;
+	$("#cell_"+10+"_"+5+"").removeClass("weight1").addClass("customWall");
+
+	map[10][6] = -1;
+	$("#cell_"+10+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[10][7] = -1;
+	$("#cell_"+10+"_"+7+"").removeClass("weight1").addClass("customWall");
+
+	map[10][8] = -1;
+	$("#cell_"+10+"_"+8+"").removeClass("weight1").addClass("customWall");
+
+	map[10][9] = -1;
+	$("#cell_"+10+"_"+9+"").removeClass("weight1").addClass("customWall");
+
+	map[10][10] = -1;
+	$("#cell_"+10+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[10][11] = -1;
+	$("#cell_"+10+"_"+11+"").removeClass("weight1").addClass("customWall");
+
+	map[10][12] = -1;
+	$("#cell_"+10+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[10][13] = -1;
+	$("#cell_"+10+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[10][14] = -1;
+	$("#cell_"+10+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[10][15] = -1;
+	$("#cell_"+10+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[10][16] = -1;
+	$("#cell_"+10+"_"+16+"").removeClass("weight1").addClass("customWall");
+
+	map[10][17] = -1;
+	$("#cell_"+10+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[10][18] = -1;
+	$("#cell_"+10+"_"+18+"").removeClass("weight1").addClass("customWall");
+
+	map[10][19] = -1;
+	$("#cell_"+10+"_"+19+"").removeClass("weight1").addClass("customWall");
+
+	map[10][20] = -1;
+	$("#cell_"+10+"_"+20+"").removeClass("weight1").addClass("customWall");
+
+	map[10][21] = -1;
+	$("#cell_"+10+"_"+21+"").removeClass("weight1").addClass("customWall");
+
+	map[10][22] = -1;
+	$("#cell_"+10+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[11][22] = -1;
+	$("#cell_"+11+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[12][22] = -1;
+	$("#cell_"+12+"_"+22+"").removeClass("weight1").addClass("customWall");
+
+	map[12][2] = -1;
+	$("#cell_"+12+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[13][2] = -1;
+	$("#cell_"+13+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[14][2] = -1;
+	$("#cell_"+14+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[15][2] = -1;
+	$("#cell_"+15+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[16][2] = -1;
+	$("#cell_"+16+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[17][2] = -1;
+	$("#cell_"+17+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[18][2] = -1;
+	$("#cell_"+18+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[19][2] = -1;
+	$("#cell_"+19+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[20][2] = -1;
+	$("#cell_"+20+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[21][2] = -1;
+	$("#cell_"+21+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[22][2] = -1;
+	$("#cell_"+22+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[23][2] = -1;
+	$("#cell_"+23+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[24][2] = -1;
+	$("#cell_"+24+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[25][2] = -1;
+	$("#cell_"+25+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[26][2] = -1;
+	$("#cell_"+26+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[27][2] = -1;
+	$("#cell_"+27+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[28][2] = -1;
+	$("#cell_"+28+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[29][2] = -1;
+	$("#cell_"+29+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[9][2] = -1;
+	$("#cell_"+9+"_"+2+"").removeClass("weight1").addClass("customWall");
+
+	map[12][6] = -1;
+	$("#cell_"+12+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[13][6] = -1;
+	$("#cell_"+13+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[14][6] = -1;
+	$("#cell_"+14+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[15][6] = -1;
+	$("#cell_"+15+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[16][6] = -1;
+	$("#cell_"+16+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[17][6] = -1;
+	$("#cell_"+17+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[18][6] = -1;
+	$("#cell_"+18+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[19][6] = -1;
+	$("#cell_"+19+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[20][6] = -1;
+	$("#cell_"+20+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[21][6] = -1;
+	$("#cell_"+21+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[22][6] = -1;
+	$("#cell_"+22+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[23][6] = -1;
+	$("#cell_"+23+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[24][6] = -1;
+	$("#cell_"+24+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[25][6] = -1;
+	$("#cell_"+25+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[26][6] = -1;
+	$("#cell_"+26+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[27][6] = -1;
+	$("#cell_"+27+"_"+6+"").removeClass("weight1").addClass("customWall");
+
+	map[27][7] = -1;
+	$("#cell_"+27+"_"+7+"").removeClass("weight1").addClass("customWall");
+
+	map[27][8] = -1;
+	$("#cell_"+27+"_"+8+"").removeClass("weight1").addClass("customWall");
+
+	map[27][9] = -1;
+	$("#cell_"+27+"_"+9+"").removeClass("weight1").addClass("customWall");
+
+	map[27][10] = -1;
+	$("#cell_"+27+"_"+10+"").removeClass("weight1").addClass("customWall");
+
+	map[27][11] = -1;
+	$("#cell_"+27+"_"+11+"").removeClass("weight1").addClass("customWall");
+
+	map[27][12] = -1;
+	$("#cell_"+27+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[27][13] = -1;
+	$("#cell_"+27+"_"+13+"").removeClass("weight1").addClass("customWall");
+
+	map[27][14] = -1;
+	$("#cell_"+27+"_"+14+"").removeClass("weight1").addClass("customWall");
+
+	map[27][15] = -1;
+	$("#cell_"+27+"_"+15+"").removeClass("weight1").addClass("customWall");
+
+	map[27][16] = -1;
+	$("#cell_"+27+"_"+16+"").removeClass("weight1").addClass("customWall");
+
+	map[27][17] = -1;
+	$("#cell_"+27+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[28][17] = -1;
+	$("#cell_"+28+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[29][17] = -1;
+	$("#cell_"+29+"_"+17+"").removeClass("weight1").addClass("customWall");
+
+	map[3][11] = -1;
+	$("#cell_"+3+"_"+11+"").removeClass("weight1").addClass("customWall");
+
+	map[3][12] = -1;
+	$("#cell_"+3+"_"+12+"").removeClass("weight1").addClass("customWall");
+
+	map[3][13] = -1;
+	$("#cell_"+3+"_"+13+"").removeClass("weight1").addClass("customWall");
+	//Labirinto - FIM
+	map[0][0] = 1;
+	$(".clear:first-child .grid_item:first-child").removeClass(NAME_CLASS_WALL);
+	$(".grid_item").removeClass("sizeBlock40x").removeClass("sizeBlock10x").removeClass("sizeBlock32x");
+	$(".grid_item").addClass("sizeBlock32x");
+	return map;
+}
+/* ######################### Tipos de Mapas ######################### */
+
+/* ######################### Algoritmos ######################### */
+// OBS: Os algoritmos poderiam ter sido implementados na mesma função, isso não foi feito a título de legibilidade
+function A_Star(ev){
+	var target = $(ev.target);
+	var x = target.attr('x')*1;
+	var y = target.attr('y')*1;
+	map[x][y] = GOAL;
+	$(".grid_item").removeClass("blockBlue").removeClass("treePath");;
+	var lessNode;
+	var neighbors;
+	var openList = new openL();
+	var closeList = new closeL();
+	var thisLeaf;
+	var goTo;
+	var lastID;
+	var bestPath;
+	var rTree = new tree();
+	var stop = true;
+	var expandedNode = 1;
+	var i;
+	var j;
+	var treePath = [];
+	openList.addNode(current[0],current[1],0,0,0);
+	while((openList.getSize() > 0) && stop){
+		lessNode = controller.getLessNode(openList);
+		neighbors = controller.getNeighbors(map,lessNode);
+		thisLeaf = new leaf();
+		openList.removeNode(lessNode);
+		for(var neighbor in neighbors) {
+			goTo = neighbor;
+			neighbor = neighbors[neighbor];
+			i = neighbor[0];
+			j = neighbor[1];
+			if (map[i][j] == VALUE_WALL) {
+				continue;
+			}
+			if (map[i][j] == GOAL){ 
+				stop = false;
+				thisLeaf.addChildren(neighbor,goTo);
+				rTree.addLeaf(thisLeaf);
+				neighbor.g = 0;
+				map[i][j] = 1;
+				clearOldStart(current);
+				current[0] = i;
+				current[1] = j;
+				setStart(current);
+				lastID = i+","+j;
+				break;
+			}
+			neighbor.g = lessNode.g + map[i][j];
+			neighbor.h = h(i,x,j,y);
+			neighbor.f = neighbor.g + neighbor.h;
+			if (!controller.checkNodeWeight(neighbor,openList) && !controller.checkNodeWeight(neighbor,closeList)) {
+				openList.addNode(i,j,neighbor.f,neighbor.h,neighbor.g);
+				thisLeaf.addChildren(neighbor,goTo);
+				expandedNode++;
+				treePath.push(i+","+j);
+			}
+		}
+		closeList.addNode(lessNode.x,lessNode.y,lessNode.f,lessNode.h,lessNode.g);
+		thisLeaf.setLeaf(lessNode);
+		rTree.addLeaf(thisLeaf.getNode());
+	}
+
+	if (stop) {
+		$(".lk-content-row:eq(1)").text("Não existe caminho D= ");
+		$("#wallMsg").modal("show");
+		ev.stopPropagation();
+		setTimeout(function() {
+			$("#wallMsg").modal("hide");
+		}, 2500);
+		return "";
+	}
+
+	rTree.algorithm = "A*";
+	rTree.lastID = lastID;
+	rTree.totalCost = lessNode.g;
+	rTree.nodeVisited = treePath;
+	rTree.expandedNode = expandedNode;
+	return rTree;
+}
+
+function greedy(ev){
+	var target = $(ev.target);
+	var x = target.attr('x')*1;
+	var y = target.attr('y')*1;
+	map[x][y] = GOAL;
+	$(".grid_item").removeClass("blockBlue").removeClass("treePath");
+	var lessNode;
+	var totalCost = 0;
+	var neighbors;
+	var openList = new openL();
+	var closeList = new closeL();
+	var thisLeaf;
+	var goTo;
+	var lastID;
+	var bestPath;
+	var rTree = new tree();
+	var stop = true;
+	var expandedNode = 1;
+	var i;
+	var j;
+	var treePath = [];
+	openList.addNode(current[0],current[1],0,0,0);
+	while((openList.getSize() > 0) && stop){
+		lessNode = controller.getLessNode(openList);
+		neighbors = controller.getNeighbors(map,lessNode);
+		thisLeaf = new leaf();
+		openList.removeNode(lessNode);
+		for(var neighbor in neighbors) {
+			goTo = neighbor;
+			neighbor = neighbors[neighbor];
+			i = neighbor[0];
+			j = neighbor[1];
+			if (map[i][j] == VALUE_WALL) {
+				continue;
+			}
+			if (map[i][j] == GOAL){ 
+				stop = false;
+				thisLeaf.addChildren(neighbor,goTo);
+				rTree.addLeaf(thisLeaf);
+				map[i][j] = 1;
+				clearOldStart(current);
+				current[0] = i;
+				current[1] = j;
+				setStart(current);
+				lastID = i+","+j;
+				break;
+			}
+			neighbor.h = h(i,x,j,y);
+			neighbor.f = neighbor.h;
+			if (!controller.checkNodeWeight(neighbor,openList) && !controller.checkNodeWeight(neighbor,closeList)) {
+				openList.addNode(i,j,neighbor.f,neighbor.h);
+				thisLeaf.addChildren(neighbor,goTo);
+				expandedNode++;
+				treePath.push(i+","+j);
+				totalCost = totalCost + neighbor.f;
+			}
+		}
+		closeList.addNode(lessNode.x,lessNode.y,lessNode.f,lessNode.h);
+		thisLeaf.setLeaf(lessNode);
+		rTree.addLeaf(thisLeaf.getNode());
+	}
+
+	if (stop) {
+		$(".lk-content-row:eq(1)").text("Não existe caminho D= ");
+		$("#wallMsg").modal("show");
+		ev.stopPropagation();
+		setTimeout(function() {
+			$("#wallMsg").modal("hide");
+		}, 2500);
+		return "";
+	}
+
+	rTree.algorithm = "Guloso";
+	rTree.lastID = lastID;
+	rTree.totalCost = totalCost;
+	rTree.nodeVisited = treePath;
+	rTree.expandedNode = expandedNode;
+	return rTree;
+}
+
+function uniformCost(ev){
+	var target = $(ev.target);
+	var x = target.attr('x')*1;
+	var y = target.attr('y')*1;
+	map[x][y] = GOAL;
+	$(".grid_item").removeClass("blockBlue").removeClass("treePath");;
+	var lessNode;
+	var neighbors;
+	var openList = new openL();
+	var closeList = new closeL();
+	var thisLeaf;
+	var goTo;
+	var lastID;
+	var bestPath;
+	var rTree = new tree();
+	var stop = true;
+	var expandedNode = 1;
+	var i;
+	var j;
+	var treePath = [];
+	openList.addNode(current[0],current[1],0,0,0);
+	while((openList.getSize() > 0) && stop){
+		lessNode = controller.getLessNode(openList);
+		neighbors = controller.getNeighbors(map,lessNode);
+		thisLeaf = new leaf();
+		openList.removeNode(lessNode);
+		for(var neighbor in neighbors) {
+			goTo = neighbor;
+			neighbor = neighbors[neighbor];
+			i = neighbor[0];
+			j = neighbor[1];
+			if (map[i][j] == VALUE_WALL) {
+				continue;
+			}
+			if (map[i][j] == GOAL){ 
+				stop = false;
+				thisLeaf.addChildren(neighbor,goTo);
+				rTree.addLeaf(thisLeaf);
+				neighbor.g = 0;
+				map[i][j] = 1;
+				clearOldStart(current);
+				current[0] = i;
+				current[1] = j;
+				setStart(current);
+				lastID = i+","+j;
+				break;
+			}
+			neighbor.g = lessNode.g + map[i][j];
+			neighbor.f = neighbor.g;
+			if (!controller.checkNodeWeight(neighbor,openList) && !controller.checkNodeWeight(neighbor,closeList)) {
+				openList.addNode(i,j,neighbor.f,0,neighbor.g);
+				thisLeaf.addChildren(neighbor,goTo);
+				expandedNode++;
+				treePath.push(i+","+j);
+			}
+		}
+		closeList.addNode(lessNode.x,lessNode.y,lessNode.f,lessNode.h,lessNode.g);
+		thisLeaf.setLeaf(lessNode);
+		rTree.addLeaf(thisLeaf.getNode());
+	}
+
+	if (stop) {
+		$(".lk-content-row:eq(1)").text("Não existe caminho D= ");
+		$("#wallMsg").modal("show");
+		ev.stopPropagation();
+		setTimeout(function() {
+			$("#wallMsg").modal("hide");
+		}, 2500);
+		return "";
+	}
+
+	rTree.algorithm = "Custo Uniforme";
+	rTree.lastID = lastID;
+	rTree.totalCost = lessNode.g;
+	rTree.nodeVisited = treePath;
+	rTree.expandedNode = expandedNode;
+	return rTree;
+}
+/* ######################### Algoritmos ######################### */
+
+/* ######################### Handles ######################### */
+$(document).on("click", '#newMap', function() {
+	max = $('#gridValue').val()*1;
+	if ((max == 40) || (max == 10)) {
+		map = createMap(max);
+		if (max == 40) {
+			$("#main").width(570);
+		}else if (max == 10) {
+			$("#main").width(630);
+		}
+		current[0] = 0;
+		current[1] = 0;
+		$(".lk-hidden").fadeIn("slow");
+		$(".scoreLabel").fadeOut("slow");
+		$("#scoreTable").empty();
+	}else if(max == 30){
+		map = maze(max);
+		$("#main").width(960);
+		current[0] = 0;
+		current[1] = 0;
+		$(".lk-hidden").fadeIn("slow");
+		$(".scoreLabel").fadeOut("slow");
+		$("#scoreTable").empty();
+	}else{
+		$(".lk-content-row:eq(1)").text("Só tenho o 10x10 e 40x40 por enquanto");
+		$("#wallMsg").modal("show");
+		setTimeout(function() {
+			$("#wallMsg").modal("hide");
+		}, 2500);
+	}
+});
+
+$(document).on('change',"select#algorithm" ,function() {
+	current[0] = 0;
+	current[1] = 0;
+	$(".grid_item").removeClass("blockBlue").removeClass("treePath");;
+	$(".grid_item").removeClass("start");
+});
+
+$(document).on("click", '.grid_item', function(ev) {
+	var target = $(ev.target);
+	var isWall = target["0"].classList[1];
+	var algorithm = $("#algorithm").val();
+	var rTree = "";
+	if ((isWall == NAME_CLASS_WALL) || (isWall == NAME_CLASS_WALL_CUSTOM)) {
+		$(".lk-content-row:eq(1)").text("Não clica na parede cara D= ");
+		$("#wallMsg").modal("show");
+		ev.stopPropagation();
+		setTimeout(function() {
+			$("#wallMsg").modal("hide");
+		}, 2500);
+		return ;
+	}
+	
+	if (algorithm == A_STAR) {
+		rTree = A_Star(ev);
+	}else if(algorithm == GREEDY){
+		rTree = greedy(ev);
+	}else if(algorithm == UNIFORME_COST){
+		rTree = uniformCost(ev);
+	}
+
+	if (rTree != "") {
+		bestPath = rTree.getPath(rTree.root,rTree.lastID);
+		controller.showPath(rTree.nodeVisited,bestPath);
+		$("#scoreTable").prepend("<tr><td>"+rTree.algorithm+"</td><td>"+bestPath.path.length+"</td><td>"+(++rTree.totalCost)+"</td><td>"+(++rTree.expandedNode)+"</td></tr>");
+		$(".scoreLabel").fadeIn("slow");
+	}
+});
+/* ######################### Handles ######################### */
+
+</script>
+</head>
+<body>
+<div class="jumbotron">
+  <h1 class="lk-h1">Demonstração</h1>      
+  <p class="lk-p">Algoritmos de Busca !</p> 
+</div>
+
+<div class="options">
+	<div id="gridSize">
+		<label>
+			<span class="lk-span-option">Grid:</span>
+		    <select id="gridValue">
+		    	<option value="10">10x10</option>
+		        <option value="40">40x40</option>
+		        <option value="30">Labirinto 1</option>
+		    </select>
+		</label>
+	</div>
+	<div id="searchType">
+		<label>
+			<span class="lk-span-alg">Busca:</span>
+		    <select id="algorithm">
+		        <option value="A*" selected> A* </option>
+		        <option value="greedy"> Guloso </option>
+		        <option value="uniformCost"> Custo Uniforme </option>
+		    </select>
+		</label>
+	</div>
+</div>
+
+<div class="clear"></div>
+<button id="newMap" class="button" >Gerar Mapa</button>
+<div class="clear"></div>
+<div id="main"><div id="search_grid" class="lk-hidden"></div></div>
+
+<div class="scoreLabel"> 
+	<h3> Score</h3> 
+	<div class="panel-body">
+	    <table class="table table-hover table-bordered table-list">
+	        <thead>
+	            <tr>
+	                <th>Algoritmo</th>
+	                <th>Tamanho</th>
+	                <th>Custo Total f(n)</th>
+	                <th>Nós Expandidos</th>
+	            </tr>
+	        </thead>
+	        <tbody id="scoreTable"></tbody>
+	    </table>
+	</div>
+</div>
+
+<div class="modal fade" id="wallMsg" tabindex="-1" role="dialog" aria-labelledby="lk-modal">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header"> </div>
+				<div class="modal-body">
+				<div class="lk-content-row lk-img"> <img src="http://i.imgur.com/ZHidrwr.png" width="48px" height="48px"></div>
+				<div class="lk-content-row lk-msg"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
